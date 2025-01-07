@@ -1,0 +1,14 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+body,
+html {
+	background-color: #000000;
+	font-family:
+		Inter,
+		Noto Sans JP,
+		Noto Sans,
+		Vazirmatn,
+		sans-serif;
+}
