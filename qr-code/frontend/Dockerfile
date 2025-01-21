@@ -4,6 +4,7 @@ WORKDIR /app
 COPY package*.json ./
 COPY . .
 RUN npm ci
+ENV ADAPTER=node
 
 RUN npm run build
 RUN npm prune --production
