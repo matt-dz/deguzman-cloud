@@ -2,7 +2,7 @@ FROM --platform=$BUILDPLATFORM golang:alpine AS build
 WORKDIR /app
 COPY . .
 RUN apk update && apk add make
-RUN make build
+RUN make
 
 FROM alpine:latest
 WORKDIR /app
