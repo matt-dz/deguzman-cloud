@@ -1,6 +1,3 @@
 [submodule "deguzman-simple-storage"]
 	path = deguzman-simple-storage
 	url = https://github.com/matthewdeguzman/deguzman-simple-storage.git
-[submodule "dsa-discussion"]
-	path = dsa-discussion
-	url = https://github.com/matthewdeguzman/dsa-discussion.git
