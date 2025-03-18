@@ -58,8 +58,8 @@ jobs:
           make docker-push TAG=latest
 
   deploy-qr:
-    needs: build-dsa
-    name: Rollout deployment
+    needs: build-qr
+    name: Rollout QR Code Deployment
     runs-on: ubuntu-latest
     steps:
       - name: Rollout deployment
@@ -74,7 +74,7 @@ jobs:
 
   deploy-dsa:
     needs: build-dsa
-    name: Rollout deployment
+    name: Rollout DSA Deployment
     runs-on: ubuntu-latest
     steps:
       - name: Rollout deployment
