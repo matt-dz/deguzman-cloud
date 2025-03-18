@@ -11,6 +11,7 @@ jobs:
     outputs:
       dsa: ${{ steps.filter.outputs.dsa }}
       qr: ${{ steps.filter.outputs.qr }}
+      dss: ${{ steps.filter.outputs.dss }}
     steps:
       - uses: actions/checkout@v4
       - uses: dorny/paths-filter@v3
