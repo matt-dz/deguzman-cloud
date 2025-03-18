@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { QRCode } from '$lib/types';
 	import { goto } from '$app/navigation';
 
 	let url = $state('');
@@ -8,27 +7,7 @@
 
 	async function submitURL(event: Event) {
 		event.preventDefault();
-
-		try {
-			const resp = await fetch(`${import.meta.env.VITE_BASE_URL}/api/qr`, {
-				method: 'POST',
-				body: JSON.stringify({ url }),
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			});
-
-			if (resp.status != 200) {
-				alert('Error creating QR code');
-				console.error(resp.statusText);
-			}
-
-			const qrCode: QRCode = await resp.json();
-			await goto(`/view/${qrCode.id}?title=${title}&description=${description}`);
-		} catch (error) {
-			alert('Error creating QR code');
-			console.error(error);
-		}
+		await goto(`/code?url=${url}&title=${title}&description=${description}`);
 	}
 </script>
 
@@ -43,7 +22,7 @@
 			<input bind:value={title} type="text" placeholder="Title" />
 			<input bind:value={description} type="text" placeholder="Description" />
 			<button
-				class="border-base-content mt-4 rounded-xl border border-solid px-3 py-1 text-lg font-extralight"
+				class="mt-4 rounded-xl border-2 border-solid border-base-content px-3 py-1 text-lg font-extralight"
 				>Create</button
 			>
 		</form>

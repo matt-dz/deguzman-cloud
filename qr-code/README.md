@@ -1,3 +1,3 @@
 # QR Code Generator
 
-Check it out at [qr.deguzman.cloud](https://qr.deguzman.cloud)!
+A simple website for generating QR codes build with Svelte.
