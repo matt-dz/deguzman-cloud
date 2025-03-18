@@ -12,7 +12,7 @@
 </script>
 
 <div class="flex h-[100vh] items-center">
-	<div class="flex w-full flex-col items-center">
+	<div class="flex w-full flex-col items-center text-white">
 		<form
 			onsubmit={async (event) => submitURL(event)}
 			class="flex w-full max-w-[700px] flex-col items-center gap-2"
