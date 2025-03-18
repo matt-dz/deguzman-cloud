@@ -37,7 +37,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build and push image
         run: |
-          cd qr
+          cd qr-code
           make build
           make docker-push TAG=$(git rev-parse --short "$GITHUB_SHA")
           make docker-push TAG=latest
