@@ -1,0 +1,11 @@
+bin/
+!bin/*.keep
+
+README.md
+
+.env
+.env.example
+
+.git/
+.github/
+.gitignore
