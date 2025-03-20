@@ -21,6 +21,8 @@ jobs:
         id: filter
         with:
           filters: |
+            frontend:
+              - 'frontend/**'
             dsa:
               - 'dsa/**'
             qr:
