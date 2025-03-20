@@ -13,3 +13,7 @@ type HandleSignupBody struct {
 type HandleEmailVerificationBody struct {
 	Code string `json:"code"`
 }
+
+type HandleLoginResponse struct {
+	Redirect string `json:"redirect"`
+}

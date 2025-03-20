@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"deguzman-auth/internal/argon2id"
+	"deguzman-auth/internal/cors"
 	"deguzman-auth/internal/database"
 	"deguzman-auth/internal/email"
 	"deguzman-auth/internal/logger"
@@ -34,18 +35,12 @@ var pgError *pgconn.PgError
 
 var expiredSessionError = errors.New("session expired")
 
-func decodeJson(dst interface{}, r *http.Request) error {
-	decoder := json.NewDecoder(r.Body)
-	decoder.DisallowUnknownFields()
-	if err := decoder.Decode(dst); err != nil {
-		return err
-	}
-	defer r.Body.Close()
-	return nil
-}
-
 func HandleHeartbeat(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
+}
+
+func HandleCors(w http.ResponseWriter, r *http.Request) {
+	cors.AddCors(w)
 }
 
 func HandleLogin(w http.ResponseWriter, r *http.Request) {
@@ -105,6 +100,11 @@ func HandleLogin(w http.ResponseWriter, r *http.Request) {
 
 	log.DebugContext(r.Context(), "Setting session token cookie")
 	session.SetSessionTokenCookie(w, token, userSession.ExpiresAt.Time)
+
+	/* Redirect */
+	json.NewEncoder(w).Encode(HandleLoginResponse{
+		Redirect: sanitizeRedirect(r.URL.Query().Get("redirect")),
+	})
 }
 
 func HandleSignup(w http.ResponseWriter, r *http.Request) {

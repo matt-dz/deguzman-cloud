@@ -18,9 +18,17 @@ func main() {
 		middleware.Timer(),
 	))
 
+	mux.HandleFunc("OPTIONS /", middleware.Chain(
+		handlers.HandleCors,
+		middleware.LogContext(),
+		middleware.Timer(),
+	))
+
 	mux.HandleFunc("POST /api/login", middleware.Chain(
 		handlers.HandleLogin,
 		middleware.LogContext(),
+		middleware.ValidateOrigin(),
+		middleware.AddLoginCors(),
 		middleware.Timer(),
 	))
 
@@ -34,7 +42,9 @@ func main() {
 	mux.HandleFunc("POST /api/logout", middleware.Chain(
 		handlers.HandleLogout,
 		middleware.HandleRequest(),
+		middleware.ValidateOrigin(),
 		middleware.LogContext(),
+		middleware.AddCors(),
 		middleware.Timer(),
 	))
 
@@ -43,6 +53,7 @@ func main() {
 		middleware.HandleRequest(),
 		middleware.ValidateOrigin(),
 		middleware.LogContext(),
+		middleware.AddCors(),
 		middleware.Timer(),
 	))
 
@@ -51,6 +62,7 @@ func main() {
 		middleware.HandleRequest(),
 		middleware.ValidateOrigin(),
 		middleware.LogContext(),
+		middleware.AddCors(),
 		middleware.Timer(),
 	))
 
@@ -59,6 +71,7 @@ func main() {
 		middleware.HandleRequest(),
 		middleware.ValidateOrigin(),
 		middleware.LogContext(),
+		middleware.AddCors(),
 		middleware.Timer(),
 	))
 
