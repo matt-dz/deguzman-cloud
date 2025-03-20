@@ -40,6 +40,7 @@ func main() {
 	mux.HandleFunc("POST /api/auth", middleware.Chain(
 		handlers.HandleSessionValidation,
 		middleware.HandleRequest(),
+		middleware.ValidateOrigin(),
 		middleware.LogContext(),
 		middleware.Timer(),
 	))
@@ -47,6 +48,7 @@ func main() {
 	mux.HandleFunc("POST /api/verify-email", middleware.Chain(
 		handlers.HandleEmailVerification,
 		middleware.HandleRequest(),
+		middleware.ValidateOrigin(),
 		middleware.LogContext(),
 		middleware.Timer(),
 	))
@@ -54,6 +56,7 @@ func main() {
 	mux.HandleFunc("POST /api/verify-email/send", middleware.Chain(
 		handlers.HandleEmailVerificationSend,
 		middleware.HandleRequest(),
+		middleware.ValidateOrigin(),
 		middleware.LogContext(),
 		middleware.Timer(),
 	))

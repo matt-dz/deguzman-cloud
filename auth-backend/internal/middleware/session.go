@@ -6,11 +6,13 @@ import (
 	"errors"
 	"log/slog"
 	"net/http"
+	"os"
 	"regexp"
 )
 
 var (
 	originPattern = regexp.MustCompile(`^(?:https:\/\/)?[\w-]*\.?deguzman\.cloud(?::\d{1,5})?$`) // Any origin must be a subdomain of deguzman.cloud
+	localPattern  = regexp.MustCompile(`^(?:https?:\/\/)?[\w-]*\.?localhost(?::\d{1,5})?$`)      // Any origin must be a subdomain of localhost
 )
 
 func ValidateOrigin() Middleware {
@@ -19,7 +21,7 @@ func ValidateOrigin() Middleware {
 			/* Verify same origin to prevent CSRF attacks */
 			if r.Method != "GET" && r.Method != "" {
 				origin := r.Header.Get("Origin")
-				if !originPattern.MatchString(origin) {
+				if os.Getenv("ENV") == "PROD" && !originPattern.MatchString(origin) {
 					log.Error("Request not allowed from origin", slog.String("origin", origin))
 					http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 					return
