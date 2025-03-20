@@ -13,7 +13,7 @@ BUILD_NAME=$(DOCKER_REGISTRY)/$(IMAGE_NAME)
 
 
 all:
-	CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -o bin/dga cmd/main.go
+	go build -o bin/dga cmd/main.go
 
 run:
 	go run cmd/main.go
