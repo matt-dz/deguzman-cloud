@@ -19,7 +19,7 @@ run:
 	go run cmd/main.go
 
 build:
-	docker buildx build --platform linux/arm64 -t $(BUILD_NAME) .
+	docker build -t $(BUILD_NAME) .
 
 
 docker-push:

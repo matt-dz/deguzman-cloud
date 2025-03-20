@@ -1,8 +1,7 @@
-FROM --platform=$BUILDPLATFORM golang:alpine AS build
+FROM golang:alpine AS build
 WORKDIR /app
 COPY . .
-ARG TARGETARCH
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=$TARGETARCH go build -o bin/dga cmd/main.go
+RUN go build -o bin/dga cmd/main.go
 
 FROM alpine:latest
 WORKDIR /app
