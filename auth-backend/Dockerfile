@@ -1,7 +1,8 @@
-FROM golang:alpine AS build
+FROM --platform=$BUILDPLATFORM golang:alpine AS build
 WORKDIR /app
 COPY . .
-RUN go build -o bin/dga cmd/main.go
+RUN apk update --no-cache && apk add make
+RUN make
 
 FROM alpine:latest
 WORKDIR /app

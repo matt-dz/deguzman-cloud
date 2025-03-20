@@ -19,8 +19,7 @@ run:
 	go run cmd/main.go
 
 build:
-	docker build -t $(BUILD_NAME) .
-
+	docker buildx build --platform linux/arm64 -t $(BUILD_NAME) .
 
 docker-push:
 	docker tag $(BUILD_NAME) $(BUILD_NAME):$(TAG)
