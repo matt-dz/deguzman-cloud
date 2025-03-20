@@ -1,0 +1,5 @@
+bin/*
+!bin/.keep
+
+.env
+.DS_Store
