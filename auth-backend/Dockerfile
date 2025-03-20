@@ -1,8 +1,8 @@
 FROM --platform=$BUILDPLATFORM golang:alpine AS build
 WORKDIR /app
 COPY . .
-RUN apk update --no-cache && apk add make
-RUN make
+#RUN apk update --no-cache && apk add make
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -o bin/dga cmd/dga
 
 FROM alpine:latest
 WORKDIR /app
