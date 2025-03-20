@@ -1,7 +1,7 @@
 <div class="flex flex-col px-4">
 	<a class="nav-container footer-underline w-fit" href="/">home</a>
 	<a class="nav-container footer-underline w-fit" href="/services">services</a>
-	<a class="nav-container footer-underline" href="/login">login</a>
+	<a class="nav-container footer-underline" href="https://auth.deguzman.cloud">login</a>
 </div>
 
 <style lang="postcss">
