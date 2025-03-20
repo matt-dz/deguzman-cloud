@@ -3,7 +3,8 @@ ARG TARGETOS
 ARG TARGETARCH
 WORKDIR /app
 COPY . .
-RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -o bin/dga cmd/main.go
+RUN apk update && apk add make
+RUN make
 
 FROM alpine:latest
 WORKDIR /app

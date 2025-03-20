@@ -11,7 +11,7 @@ all:
 	go build -o bin/dss cmd/main.go
 
 build:
-	 docker buildx build --platform $(PLATFORM) -t $(BUILD_NAME) .
+	docker buildx build --platform $(PLATFORM) -t $(BUILD_NAME) .
 
 docker-push:
 	docker tag $(BUILD_NAME) $(BUILD_NAME):$(TAG)
