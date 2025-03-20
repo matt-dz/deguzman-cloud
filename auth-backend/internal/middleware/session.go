@@ -10,6 +10,7 @@ import (
 	"regexp"
 )
 
+// TODO: Make redirect pattern configurable with base url
 var (
 	originPattern = regexp.MustCompile(`^(?:https:\/\/)?[\w-]*\.?deguzman\.cloud(?::\d{1,5})?$`) // Any origin must be a subdomain of deguzman.cloud
 )
@@ -26,6 +27,7 @@ func ValidateOrigin() Middleware {
 					return
 				}
 			}
+			next(w, r)
 		}
 	}
 }

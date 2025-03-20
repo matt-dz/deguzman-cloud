@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"crypto/subtle"
+	"deguzman-auth/internal/cors"
 	"deguzman-auth/internal/logger"
 	"log/slog"
 	"net/http"
@@ -54,6 +55,29 @@ func AuthenticateSecret() Middleware {
 				http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 				return
 			}
+			next(w, r)
+		}
+	}
+}
+
+func AddLoginCors() Middleware {
+	return func(next http.HandlerFunc) http.HandlerFunc {
+		return func(w http.ResponseWriter, r *http.Request) {
+			if os.Getenv("ENV") == "PROD" {
+				cors.AddLoginCors(w)
+			} else {
+				cors.AddCors(w)
+			}
+			next(w, r)
+		}
+	}
+
+}
+
+func AddCors() Middleware {
+	return func(next http.HandlerFunc) http.HandlerFunc {
+		return func(w http.ResponseWriter, r *http.Request) {
+			cors.AddCors(w)
 			next(w, r)
 		}
 	}
