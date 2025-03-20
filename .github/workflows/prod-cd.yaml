@@ -34,6 +34,7 @@ jobs:
 
   build-frontend:
     needs: changes
+    name: Build Frontend
     if: ${{ needs.changes.outputs.frontend == 'true' }}
     runs-on: ubuntu-24.04-arm
     steps:
@@ -52,6 +53,7 @@ jobs:
 
   build-qr:
     needs: changes
+    name: Build QR Code Generator
     if: ${{ needs.changes.outputs.qr == 'true' }}
     runs-on: ubuntu-24.04-arm
     steps:
@@ -70,6 +72,7 @@ jobs:
 
   build-dsa:
     needs: changes
+    name: Build DSA Discussion
     if: ${{ needs.changes.outputs.dsa == 'true' }}
     runs-on: ubuntu-24.04-arm
     steps:
@@ -88,6 +91,7 @@ jobs:
 
   build-dss:
     needs: changes
+    name: Build DSS
     if: ${{ needs.changes.outputs.dss == 'true' }}
     runs-on: ubuntu-24.04-arm
     steps:
@@ -106,6 +110,7 @@ jobs:
 
   build-auth-backend:
     needs: changes
+    name: Build Auth Backend
     if: ${{ needs.changes.outputs.auth-backend == 'true' }}
     runs-on: ubuntu-24.04-arm
     steps:
@@ -124,6 +129,7 @@ jobs:
 
   build-auth-frontend:
     needs: changes
+    name: Build Auth Frontend
     if: ${{ needs.changes.outputs.auth-frontend == 'true' }}
     runs-on: ubuntu-24.04-arm
     steps:
