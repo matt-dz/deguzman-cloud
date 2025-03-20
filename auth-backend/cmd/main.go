@@ -24,11 +24,12 @@ func main() {
 		middleware.Timer(),
 	))
 
-	// mux.HandleFunc("POST /api/signup", middleware.Chain(
-	// 	handlers.HandleSignup,
-	// 	middleware.LogContext(),
-	// 	middleware.Timer(),
-	// ))
+	mux.HandleFunc("POST /api/signup", middleware.Chain(
+		handlers.HandleSignup,
+		middleware.AuthenticateSecret(),
+		middleware.LogContext(),
+		middleware.Timer(),
+	))
 
 	mux.HandleFunc("POST /api/logout", middleware.Chain(
 		handlers.HandleLogout,

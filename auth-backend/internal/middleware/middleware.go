@@ -1,9 +1,11 @@
 package middleware
 
 import (
+	"crypto/subtle"
 	"deguzman-auth/internal/logger"
 	"log/slog"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -39,6 +41,20 @@ func Timer() Middleware {
 			next(lrw, r)
 			r = r.WithContext(logger.AppendCtx(r.Context(), slog.Int("status", lrw.statusCode)))
 			log.InfoContext(r.Context(), "Request handled", slog.String("duration", time.Since(start).String()))
+		}
+	}
+}
+
+func AuthenticateSecret() Middleware {
+	return func(next http.HandlerFunc) http.HandlerFunc {
+		return func(w http.ResponseWriter, r *http.Request) {
+			apiKey := r.Header.Get("X-Api-Key")
+			if subtle.ConstantTimeCompare([]byte(apiKey), []byte(os.Getenv("SIGNUP_KEY"))) != 1 {
+				log.ErrorContext(r.Context(), "Unauthorized request", slog.String("error", "invalid API key"))
+				http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+				return
+			}
+			next(w, r)
 		}
 	}
 }
