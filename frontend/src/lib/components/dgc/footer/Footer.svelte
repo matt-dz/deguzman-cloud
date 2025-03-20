@@ -2,6 +2,9 @@
 	<a class="nav-container footer-underline w-fit" href="/">home</a>
 	<a class="nav-container footer-underline w-fit" href="/services">services</a>
 	<a class="nav-container footer-underline" href="https://auth.deguzman.cloud">login</a>
+	<a class="nav-container footer-underline" target="_blank" href="https://about.deguzman.cloud"
+		>about</a
+	>
 </div>
 
 <style lang="postcss">
