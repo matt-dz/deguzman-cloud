@@ -2,7 +2,9 @@ FROM --platform=$BUILDPLATFORM golang:alpine AS build
 WORKDIR /app
 COPY . .
 RUN apk update && apk add make
-RUN make
+ARG TARGETOS
+ARG TARGETARCH
+RUN GOOS=$TARGETOS GOARCH=$TARGETARCH make
 
 FROM alpine:latest
 WORKDIR /app

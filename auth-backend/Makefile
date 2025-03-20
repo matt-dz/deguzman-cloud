@@ -10,21 +10,23 @@ IMAGE_NAME ?= deguzman-auth-backend
 DOCKER_REGISTRY ?= matthew10125
 TAG ?= latest
 BUILD_NAME=$(DOCKER_REGISTRY)/$(IMAGE_NAME)
-PLATFORM ?= linux/arm64
+TARGETOS ?= linux
+TARGETARCH ?= arm64
 
 
 all:
-	go build -o bin/dga cmd/main.go
+        go build -o bin/dga cmd/main.go
 
 run:
-	go run cmd/main.go
+        go run cmd/main.go
 
 build:
-	 docker buildx build --platform $(PLATFORM) -t $(BUILD_NAME) .
+        docker buildx build --platform $(TARGETOS)/$(TARGETARCH) --build-arg TARGETOS=$(TARGETOS) --build-arg TARGETARCH=$(TARGETARCH) -t $(BUILD_NAME) .
+
 
 docker-push:
-	docker tag $(BUILD_NAME) $(BUILD_NAME):$(TAG)
-	docker push $(BUILD_NAME):$(TAG)
+        docker tag $(BUILD_NAME) $(BUILD_NAME):$(TAG)
+        docker push $(BUILD_NAME):$(TAG)
 
 clean:
-	rm bin/*
+        rm bin/*
