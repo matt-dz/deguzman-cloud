@@ -180,7 +180,7 @@ jobs:
             kubectl rollout restart deployment dss -n dss
 
   deploy-auth-backend:
-    needs: build-dss
+    needs: build-auth-backend
     name: Rollout DeGuzman Auth Backend Deployment
     runs-on: ubuntu-latest
     steps:
