@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"crypto/subtle"
+	"encoding/json"
 	"errors"
 	"log/slog"
 	"net/http"
@@ -33,6 +34,16 @@ var pgError *pgconn.PgError
 
 var expiredSessionError = errors.New("session expired")
 
+func decodeJson(dst interface{}, r *http.Request) error {
+	decoder := json.NewDecoder(r.Body)
+	decoder.DisallowUnknownFields()
+	if err := decoder.Decode(dst); err != nil {
+		return err
+	}
+	defer r.Body.Close()
+	return nil
+}
+
 func HandleHeartbeat(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
@@ -40,22 +51,21 @@ func HandleHeartbeat(w http.ResponseWriter, r *http.Request) {
 func HandleLogin(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
 
-	/* Parse form */
-	log.DebugContext(r.Context(), "Parsing form")
-	err := r.ParseForm()
-	if err != nil {
-		log.Error("Failed to parse form", slog.Any("error", err))
+	/* Parse body */
+	var body HandleLoginBody
+	if err := decodeJson(&body, r); err != nil {
+		log.Error("Failed to decode body", slog.Any("error", err))
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	email, password := r.FormValue("email"), r.FormValue("password")
+	defer r.Body.Close()
 
 	/* Retrieve password from db */
 	log.DebugContext(r.Context(), "Retrieving password from db")
-	passwordAndId, err := sqlcDb.GetPasswordAndId(ctx, email)
+	passwordAndId, err := sqlcDb.GetPasswordAndId(ctx, body.Email)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			log.ErrorContext(r.Context(), "Email not found", slog.String("email", email))
+			log.ErrorContext(r.Context(), "Email not found", slog.String("email", body.Email))
 			http.Error(w, "Email not found", http.StatusUnauthorized)
 		} else {
 			log.ErrorContext(r.Context(), "Failed to get password", slog.Any("error", err))
@@ -74,11 +84,11 @@ func HandleLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.DebugContext(r.Context(), "Hashing given password")
-	givenPasswordHash := argon2.IDKey([]byte(password), salt, argonParams.Iterations, argonParams.Memory, argonParams.Parallelism, argonParams.KeyLength)
+	givenPasswordHash := argon2.IDKey([]byte(body.Password), salt, argonParams.Iterations, argonParams.Memory, argonParams.Parallelism, argonParams.KeyLength)
 
 	log.DebugContext(r.Context(), "Comparing passwords")
 	if subtle.ConstantTimeCompare(truePasswordHash, []byte(givenPasswordHash)) == 0 {
-		log.ErrorContext(r.Context(), "Incorrect password", slog.String("email", email))
+		log.ErrorContext(r.Context(), "Incorrect password", slog.String("email", body.Email))
 		http.Error(w, "Incorrect password", http.StatusUnauthorized)
 		return
 	}
@@ -100,34 +110,32 @@ func HandleLogin(w http.ResponseWriter, r *http.Request) {
 func HandleSignup(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
 
-	/* Parse form */
-	log.DebugContext(r.Context(), "Parsing form")
-	err := r.ParseForm()
-	if err != nil {
-		log.Error("Failed to parse form", slog.Any("error", err))
+	/* Parse body */
+	var body HandleSignupBody
+	if err := decodeJson(&body, r); err != nil {
+		log.Error("Failed to decode body", slog.Any("error", err))
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-
-	email, password := r.FormValue("email"), r.FormValue("password")
+	defer r.Body.Close()
 
 	/* Validate email */
 	log.DebugContext(r.Context(), "Validating email")
-	if _, err := mail.ParseAddress(email); err != nil {
-		log.ErrorContext(r.Context(), "Invalid email", slog.String("email", email))
+	if _, err := mail.ParseAddress(body.Email); err != nil {
+		log.ErrorContext(r.Context(), "Invalid email", slog.String("email", body.Email))
 		http.Error(w, "Invalid email", http.StatusBadRequest)
 		return
 	}
 
 	log.DebugContext(r.Context(), "Validating password")
-	if err := pswd.ValidatePassword(password); err != nil {
+	if err := pswd.ValidatePassword(body.Password); err != nil {
 		log.ErrorContext(r.Context(), "Password does not meet requirements", slog.Any("error", err))
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	log.DebugContext(r.Context(), "Hashing Password")
-	passwordHash, err := argon2id.EncodeHash(password, argon2id.DefaultParams)
+	passwordHash, err := argon2id.EncodeHash(body.Password, argon2id.DefaultParams)
 	if err != nil {
 		log.ErrorContext(r.Context(), "Failed to hash password", slog.Any("error", err))
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
@@ -137,13 +145,13 @@ func HandleSignup(w http.ResponseWriter, r *http.Request) {
 	/* Create user */
 	log.DebugContext(r.Context(), "Creating user")
 	userId, err := sqlcDb.CreateUser(ctx, sqlc.CreateUserParams{
-		Email:        email,
+		Email:        body.Email,
 		PasswordHash: passwordHash,
 	})
 	if err != nil {
 		if pgErr, ok := err.(*pgconn.PgError); ok {
 			if pgErr.Code == "23505" {
-				log.ErrorContext(r.Context(), "Email already exists", slog.String("email", email))
+				log.ErrorContext(r.Context(), "Email already exists", slog.String("email", body.Email))
 				http.Error(w, "Email already exists", http.StatusBadRequest)
 				return
 			}
@@ -187,14 +195,13 @@ func HandleEmailVerification(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
 
 	/* Parse form */
-	log.DebugContext(r.Context(), "Parsing form")
-	err := r.ParseForm()
-	if err != nil {
-		log.Error("Failed to parse form", slog.Any("error", err))
+	var body HandleEmailVerificationBody
+	if err := decodeJson(&body, r); err != nil {
+		log.Error("Failed to decode body", slog.Any("error", err))
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	code := r.FormValue("code")
+	defer r.Body.Close()
 
 	/* Retrieve email from session */
 	log.DebugContext(r.Context(), "Retrieving email from session token")
@@ -222,11 +229,11 @@ func HandleEmailVerification(w http.ResponseWriter, r *http.Request) {
 	}
 	verificationRequestId, err := sqlcDb.GetEmailVerificationRequest(ctx, sqlc.GetEmailVerificationRequestParams{
 		ID:   sessionId,
-		Code: code,
+		Code: body.Code,
 	})
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			log.ErrorContext(r.Context(), "Verification code not found", slog.String("code", code))
+			log.ErrorContext(r.Context(), "Verification code not found", slog.String("code", body.Code))
 			http.Error(w, "Invalid validation code", http.StatusUnauthorized)
 		} else {
 			log.ErrorContext(r.Context(), "Failed to get verification code", slog.Any("error", err))
@@ -275,6 +282,7 @@ func HandleEmailVerification(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// TODO: Check if code has been verified in last 10 minutes
 func HandleEmailVerificationSend(w http.ResponseWriter, r *http.Request) {
 	/* Retrieve recipient email */
 	log.DebugContext(r.Context(), "Retrieving email from session token")
