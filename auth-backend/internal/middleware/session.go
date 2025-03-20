@@ -12,7 +12,6 @@ import (
 
 var (
 	originPattern = regexp.MustCompile(`^(?:https:\/\/)?[\w-]*\.?deguzman\.cloud(?::\d{1,5})?$`) // Any origin must be a subdomain of deguzman.cloud
-	localPattern  = regexp.MustCompile(`^(?:https?:\/\/)?[\w-]*\.?localhost(?::\d{1,5})?$`)      // Any origin must be a subdomain of localhost
 )
 
 func ValidateOrigin() Middleware {
