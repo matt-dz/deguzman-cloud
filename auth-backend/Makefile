@@ -12,10 +12,11 @@ TAG ?= latest
 BUILD_NAME=$(DOCKER_REGISTRY)/$(IMAGE_NAME)
 TARGETOS ?= linux
 TARGETARCH ?= arm64
+CGO_ENABLED ?= 0
 
 
 all:
-	GOOS=$(TARGETOS) GOARCH=$(TARGETARCH) go build -o bin/dga cmd/main.go
+	CGO_ENABLED=$(CGO_ENABLED) GOOS=$(TARGETOS) GOARCH=$(TARGETARCH) go build -o bin/dga cmd/main.go
 
 run:
 	go run cmd/main.go
