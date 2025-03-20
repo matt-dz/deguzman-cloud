@@ -5,7 +5,6 @@ CREATE TABLE users (
     email_verified BOOLEAN NOT NULL DEFAULT FALSE,
     registered_2fa BOOLEAN NOT NULL DEFAULT FALSE,
     totp_key BYTEA,
-    -- recovery_code BYTEA NOT NULL,
     recovery_code BYTEA,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now ()
 );
