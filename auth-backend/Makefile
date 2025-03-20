@@ -15,7 +15,7 @@ TARGETARCH ?= arm64
 
 
 all:
-	go build -o bin/dga cmd/main.go
+	GOOS=$(TARGETOS) GOARCH=$(TARGETARCH) go build -o bin/dga cmd/main.go
 
 run:
 	go run cmd/main.go
