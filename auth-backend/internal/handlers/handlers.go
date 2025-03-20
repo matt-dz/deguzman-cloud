@@ -66,7 +66,7 @@ func HandleLogin(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			log.ErrorContext(r.Context(), "Email not found", slog.String("email", body.Email))
-			http.Error(w, "Email not found", http.StatusUnauthorized)
+			http.Error(w, "Incorrect email or password", http.StatusUnauthorized)
 		} else {
 			log.ErrorContext(r.Context(), "Failed to get password", slog.Any("error", err))
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
@@ -89,7 +89,7 @@ func HandleLogin(w http.ResponseWriter, r *http.Request) {
 	log.DebugContext(r.Context(), "Comparing passwords")
 	if subtle.ConstantTimeCompare(truePasswordHash, []byte(givenPasswordHash)) == 0 {
 		log.ErrorContext(r.Context(), "Incorrect password", slog.String("email", body.Email))
-		http.Error(w, "Incorrect password", http.StatusUnauthorized)
+		http.Error(w, "Incorrect email or password", http.StatusUnauthorized)
 		return
 	}
 
