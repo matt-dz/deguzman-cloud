@@ -1,0 +1,12 @@
+@import 'tailwindcss';
+
+html,
+body {
+	font-family: 'Inter', sans-serif;
+	background-color: #101010;
+	color: white;
+}
+
+@theme {
+	--color-grey-blue-1: #2d3645;
+}
