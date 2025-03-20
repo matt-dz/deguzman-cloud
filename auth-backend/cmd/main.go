@@ -12,46 +12,46 @@ var log = logger.GetLogger()
 func main() {
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("GET /health", middleware.Chain(
+	mux.HandleFunc("GET /api/health", middleware.Chain(
 		handlers.HandleHeartbeat,
 		middleware.LogContext(),
 		middleware.Timer(),
 	))
 
-	mux.HandleFunc("POST /login", middleware.Chain(
+	mux.HandleFunc("POST /api/login", middleware.Chain(
 		handlers.HandleLogin,
 		middleware.LogContext(),
 		middleware.Timer(),
 	))
 
-	mux.HandleFunc("POST /signup", middleware.Chain(
-		handlers.HandleSignup,
-		middleware.LogContext(),
-		middleware.Timer(),
-	))
+	// mux.HandleFunc("POST /api/signup", middleware.Chain(
+	// 	handlers.HandleSignup,
+	// 	middleware.LogContext(),
+	// 	middleware.Timer(),
+	// ))
 
-	mux.HandleFunc("POST /logout", middleware.Chain(
+	mux.HandleFunc("POST /api/logout", middleware.Chain(
 		handlers.HandleLogout,
 		middleware.HandleRequest(),
 		middleware.LogContext(),
 		middleware.Timer(),
 	))
 
-	mux.HandleFunc("POST /auth", middleware.Chain(
+	mux.HandleFunc("POST /api/auth", middleware.Chain(
 		handlers.HandleSessionValidation,
 		middleware.HandleRequest(),
 		middleware.LogContext(),
 		middleware.Timer(),
 	))
 
-	mux.HandleFunc("POST /verify-email", middleware.Chain(
+	mux.HandleFunc("POST /api/verify-email", middleware.Chain(
 		handlers.HandleEmailVerification,
 		middleware.HandleRequest(),
 		middleware.LogContext(),
 		middleware.Timer(),
 	))
 
-	mux.HandleFunc("POST /verify-email/send", middleware.Chain(
+	mux.HandleFunc("POST /api/verify-email/send", middleware.Chain(
 		handlers.HandleEmailVerificationSend,
 		middleware.HandleRequest(),
 		middleware.LogContext(),
