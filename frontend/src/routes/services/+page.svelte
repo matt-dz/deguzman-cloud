@@ -11,7 +11,7 @@
 		<div class="flex flex-col gap-1">
 			<h1 class="text-4xl md:text-7xl font-[550]">services</h1>
 			<div class="grid lg:grid-cols-2 gap-6 lg:gap-10 mt-12">
-				<Service title={'cloud'} url={'deguzman.cloud'}>
+				<Service title={'cloud'} href="/" link="deguzman.cloud">
 					{#snippet description()}
 						<p class="text-lg md:text-xl font-light">
 							Use the <span class="svc-underline">deguzman cloud</span> to level up your projects for
@@ -20,7 +20,7 @@
 					{/snippet}
 				</Service>
 
-				<Service title={'qr code'} url={'qr.deguzman.cloud'}>
+				<Service title={'qr code'} href="https://qr.deguzman.cloud" link="qr.deguzman.cloud">
 					{#snippet description()}
 						<p class="text-lg md:text-xl font-light">
 							Easily generate QR codes for your all your events at lightning speed.
@@ -28,7 +28,11 @@
 					{/snippet}
 				</Service>
 
-				<Service title={'storage'} url={'dss.deguzman.cloud'}>
+				<Service
+					title={'storage'}
+					href="https://github.com/matt-dz/deguzman-cloud/tree/main/dss"
+					link="dss.deguzman.cloud"
+				>
 					{#snippet description()}
 						<p class="text-lg md:text-xl font-light">
 							Store your static files and witness blazingly fast speeds with deguzman simple storage
@@ -37,7 +41,7 @@
 					{/snippet}
 				</Service>
 
-				<Service title={'blog'} url={'blog.deguzman.cloud'}>
+				<Service title={'blog'} href="https://blog.deguzman.cloud" link="blog.deguzman.cloud">
 					{#snippet description()}
 						<p class="text-lg md:text-xl font-light">
 							Read up on the amazing thoughts, stories, and ideas from the creators of the <span
