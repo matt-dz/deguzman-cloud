@@ -13,13 +13,13 @@ BUILD_NAME=$(DOCKER_REGISTRY)/$(IMAGE_NAME)
 
 
 all:
-	go build -o bin/dga cmd/main.go
+	CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -o bin/dga cmd/main.go
 
 run:
 	go run cmd/main.go
 
 build:
-	docker buildx build --platform linux/arm64 -t $(BUILD_NAME) .
+	docker build --platform linux/arm64 -t $(BUILD_NAME) .
 
 docker-push:
 	docker tag $(BUILD_NAME) $(BUILD_NAME):$(TAG)
