@@ -7,6 +7,8 @@
 
 	let { redirectUrl }: Props = $props();
 
+	let isErrorShaking = $state(false);
+
 	let email = $state('');
 	let password = $state('');
 	let errorText = $state('');
@@ -29,6 +31,10 @@
 
 			if (!res.ok) {
 				errorText = res.statusText;
+				isErrorShaking = true;
+				setTimeout(() => {
+					isErrorShaking = false;
+				}, 1000);
 				return;
 			}
 
@@ -38,7 +44,7 @@
 			console.error(e);
 		}
 
-		window.location.href = resBody ? resBody.redirect : '/home';
+		if (resBody) window.location.href = resBody.redirect ?? '/home';
 	}
 </script>
 
@@ -73,6 +79,34 @@
 			>
 				<span class="btn-text text-sm text-white sm:text-base">Log In</span>
 			</button>
+			<p class:shake-text={isErrorShaking} class="text-red-400" class:opacity-0={!errorText}>
+				{errorText || 'placeholder'}
+			</p>
 		</form>
 	</div>
 </div>
+
+<style>
+	@keyframes shake {
+		0% {
+			transform: translateX(0);
+		}
+		25% {
+			transform: translateX(-10px);
+		}
+		50% {
+			transform: translateX(10px);
+		}
+		75% {
+			transform: translateX(-10px);
+		}
+		100% {
+			transform: translateX(0);
+		}
+	}
+
+	.shake-text {
+		display: inline-block;
+		animation: shake 0.5s ease-in-out;
+	}
+</style>
