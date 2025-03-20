@@ -22,7 +22,7 @@ run:
 	go run cmd/main.go
 
 build:
-	docker buildx build --platform $(TARGETOS)/$(TARGETARCH) --build-arg TARGETOS=$(TARGETOS) --build-arg TARGETARCH=$(TARGETARCH) -t $(BUILD_NAME) .
+	docker buildx build --platform $(TARGETOS)/$(TARGETARCH) --build-arg TARGETOS=$(TARGETOS) --build-arg TARGETARCH=$(TARGETARCH) --build-arg CGO_ENABLED=$(CGO_ENABLED) -t $(BUILD_NAME) .
 
 
 docker-push:
