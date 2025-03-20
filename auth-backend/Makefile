@@ -6,7 +6,7 @@ ifneq (,$(wildcard .env))
     export
 endif
 
-IMAGE_NAME ?= dga
+IMAGE_NAME ?= deguzman-auth-backend
 DOCKER_REGISTRY ?= matthew10125
 TAG ?= latest
 BUILD_NAME=$(DOCKER_REGISTRY)/$(IMAGE_NAME)
