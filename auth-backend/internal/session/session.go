@@ -25,6 +25,7 @@ var sqlcDb = sqlc.New(db)
 var log = logger.GetLogger()
 
 const sessionCookieName = "session"
+const cookieDomain = ".deguzman.cloud"
 
 var (
 	ErrUnauthorized     = errors.New("unauthorized")
@@ -161,6 +162,7 @@ func SetSessionTokenCookie(w http.ResponseWriter, token string, expiresAt time.T
 		http.SetCookie(w, &http.Cookie{
 			Name:     sessionCookieName,
 			Value:    token,
+			Domain:   cookieDomain,
 			HttpOnly: true,
 			SameSite: http.SameSiteLaxMode,
 			Expires:  expiresAt,
@@ -185,6 +187,7 @@ func DeleteSessionTokenCookie(w http.ResponseWriter) {
 		http.SetCookie(w, &http.Cookie{
 			Name:     sessionCookieName,
 			Value:    "",
+			Domain:   cookieDomain,
 			SameSite: http.SameSiteLaxMode,
 			MaxAge:   0,
 			Path:     "/",
