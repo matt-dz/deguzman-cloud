@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
 	interface Props {
 		loggedIn: boolean;
 	}
@@ -15,7 +14,7 @@
 			if (!res.ok) {
 				console.error('Error logging out', res.status, res.text);
 			}
-			goto('/');
+			window.location.href = '/';
 		} catch (e) {
 			alert('Uh-oh! Something went wrong...');
 			console.error('Error logging out', e);
