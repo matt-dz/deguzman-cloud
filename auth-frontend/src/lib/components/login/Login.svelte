@@ -27,10 +27,9 @@
 				},
 				body: JSON.stringify({ email, password })
 			});
-			console.log(res);
 
 			if (!res.ok) {
-				errorText = res.statusText;
+				errorText = await res.text();
 				isErrorShaking = true;
 				setTimeout(() => {
 					isErrorShaking = false;
