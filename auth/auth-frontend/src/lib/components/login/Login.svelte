@@ -49,8 +49,10 @@
 </script>
 
 <div class="flex w-full flex-col items-center px-12 py-8">
-	<div class="w-full max-w-[700px]">
-		<h1 class="text-2xl font-semibold">Log in to the DeGuzman Cloud</h1>
+	<div class="w-full">
+		<h1 class="text-2xl font-semibold">
+			Log in to the <span class="inline-block italic">DeGuzman Cloud</span>
+		</h1>
 		<form class="mt-8 flex flex-col items-center gap-4" onsubmit={async (e) => await onsubmit(e)}>
 			<label class="flex w-full flex-col gap-2">
 				<h1 class="text-sm">Email</h1>
