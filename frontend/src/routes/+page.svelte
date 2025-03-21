@@ -1,5 +1,5 @@
 <svelte:head>
-	<title>deguzman | home </title>
+	<title>deguzman | home</title>
 </svelte:head>
 
 <div class="flex flex-col">

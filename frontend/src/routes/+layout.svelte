@@ -1,15 +1,9 @@
 <script lang="ts">
 	import '../app.css';
 	import Footer from '$lib/components/dgc/footer/Footer.svelte';
+	import type { LayoutProps } from './$types';
 
-	interface Props {
-		data: { pathname: string; isLoggedIn: boolean };
-		children?: import('svelte').Snippet;
-	}
-
-	let { data, children }: Props = $props();
-	const pathname = $derived(data.pathname);
-	// const isLoggedIn = $derived(data.isLoggedIn);
+	let { data, children }: LayoutProps = $props();
 </script>
 
 <svelte:head>
@@ -37,11 +31,11 @@
 
 <div class="flex flex-col items-center h-dvh">
 	<div class="w-full max-w-[1000px] h-full flex flex-col pb-8">
-		{#key pathname}
+		{#key data.pathname}
 			<div class="flex-grow">
 				{@render children?.()}
 			</div>
 		{/key}
-		<Footer />
+		<Footer loggedIn={data.loggedIn} />
 	</div>
 </div>
