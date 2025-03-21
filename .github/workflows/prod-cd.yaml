@@ -37,6 +37,7 @@ jobs:
   build-frontend:
     needs: changes
     name: Build Frontend
+    environment: Frontend
     if: ${{ needs.changes.outputs.frontend == 'true' }}
     runs-on: ubuntu-24.04-arm
     steps:
@@ -132,6 +133,7 @@ jobs:
   build-auth-frontend:
     needs: changes
     name: Build Auth Frontend
+    environment: Auth Frontend
     if: ${{ needs.changes.outputs.auth-frontend == 'true' }}
     runs-on: ubuntu-24.04-arm
     steps:
