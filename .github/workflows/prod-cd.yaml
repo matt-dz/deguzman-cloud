@@ -48,9 +48,11 @@ jobs:
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build and push image
+        env:
+          VITE_AUTH_BACKEND_URL: ${{ secrets.VITE_AUTH_BACKEND_URL }}
         working-directory: frontend
         run: |
-          make build
+          VITE_AUTH_BACKEND_URL=${VITE_AUTH_BACKEND_URL} make build
           make docker-push TAG=$(git rev-parse --short "$GITHUB_SHA")
           make docker-push TAG=latest
 

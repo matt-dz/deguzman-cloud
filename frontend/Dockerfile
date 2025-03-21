@@ -1,9 +1,10 @@
 # Stage 1: Build the SvelteKit application
 FROM --platform=$BUILDPLATFORM node:latest AS build
+ARG VITE_AUTH_BACKEND_URL
 ENV ADAPTER=node
 ENV VITE_BASE_URL=https://deguzman.cloud
 ENV VITE_AUTH_URL=https://auth.deguzman.cloud
-ENV VITE_AUTH_BACKEND_URL=https://auth.deguzman.cloud
+ENV VITE_AUTH_BACKEND_URL=${VITE_AUTH_BACKEND_URL}
 WORKDIR /app
 COPY package*.json ./
 COPY . .
