@@ -4,8 +4,6 @@ WORKDIR /app
 COPY package*.json ./
 COPY . .
 ENV ADAPTER=node
-ENV VITE_BASE_URL=https://auth.deguzman.cloud
-ENV VITE_HOME_URL=https://deguzman.cloud/home
 RUN npm ci
 RUN npm run build
 RUN npm prune --production

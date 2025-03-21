@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { LoginResponse } from '$lib/types';
+	import { env } from '$env/dynamic/public';
 
 	interface Props {
 		redirectUrl?: string;
@@ -18,7 +19,7 @@
 		let resBody: LoginResponse | null = null;
 		try {
 			const loginEndpoint =
-				`${import.meta.env.VITE_BASE_URL}/api/login` +
+				`${env.PUBLIC_BASE_URL}/api/login` +
 				(redirectUrl ? `?redirect=${encodeURIComponent(redirectUrl)}` : '');
 			console.log(loginEndpoint);
 			const res = await fetch(loginEndpoint, {
@@ -40,7 +41,7 @@
 			}
 
 			resBody = await res.json();
-			window.location.href = redirectUrl ?? import.meta.env.VITE_HOME_URL;
+			window.location.href = redirectUrl ?? import.meta.env.PUBLIC_HOME_URL;
 		} catch (e) {
 			alert('Uh-oh! Something went wrong...');
 			console.error(e);
