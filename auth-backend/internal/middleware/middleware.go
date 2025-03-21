@@ -64,9 +64,9 @@ func AddLoginCors() Middleware {
 	return func(next http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
 			if os.Getenv("ENV") == "PROD" {
-				cors.AddLoginCors(w)
+				cors.AddLoginCors(w, r)
 			} else {
-				cors.AddCors(w)
+				cors.AddCors(w, r)
 			}
 			next(w, r)
 		}
@@ -77,7 +77,7 @@ func AddLoginCors() Middleware {
 func AddCors() Middleware {
 	return func(next http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
-			cors.AddCors(w)
+			cors.AddCors(w, r)
 			next(w, r)
 		}
 	}

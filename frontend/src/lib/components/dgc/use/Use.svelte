@@ -1,17 +1,14 @@
 <script lang="ts">
+	import type { Snippet } from 'svelte';
+
 	interface Props {
 		title: string;
 		description: string;
 		direction?: string;
-		children?: import('svelte').Snippet;
+		children?: Snippet;
 	}
 
-	let {
-		title,
-		description,
-		direction = 'left',
-		children
-	}: Props = $props();
+	let { title, description, direction = 'left', children }: Props = $props();
 </script>
 
 <div

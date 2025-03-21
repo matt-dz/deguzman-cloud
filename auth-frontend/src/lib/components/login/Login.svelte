@@ -20,11 +20,13 @@
 			const loginEndpoint =
 				`${import.meta.env.VITE_BASE_URL}/api/login` +
 				(redirectUrl ? `?redirect=${encodeURIComponent(redirectUrl)}` : '');
+			console.log(loginEndpoint);
 			const res = await fetch(loginEndpoint, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
 				},
+				credentials: 'include',
 				body: JSON.stringify({ email, password })
 			});
 
@@ -38,12 +40,11 @@
 			}
 
 			resBody = await res.json();
+			window.location.href = redirectUrl ?? import.meta.env.VITE_HOME_URL;
 		} catch (e) {
 			alert('Uh-oh! Something went wrong...');
 			console.error(e);
 		}
-
-		if (resBody) window.location.href = resBody.redirect ?? '/home';
 	}
 </script>
 

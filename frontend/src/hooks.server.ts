@@ -1,29 +1,31 @@
 import { redirect, type Handle } from '@sveltejs/kit';
-import { VITE_BASE_URL } from '$env/static/private';
-import { getSessionCookie } from '$lib/auth/utils';
 
 export const handle: Handle = async ({ event, resolve }) => {
 	const path = event.url.pathname;
 	console.log(path);
 
-	if (path.includes('/dashboard')) {
-		const sessionCookie = getSessionCookie(event.cookies);
+	if (path.includes('/home')) {
+		const loginUrl = `${import.meta.env.VITE_AUTH_URL}?redirect=${encodeURIComponent(import.meta.env.VITE_BASE_URL + '/home')}`;
+		const sessionCookie = event.cookies.get('session');
 
-		if (sessionCookie) {
-			const resp = await fetch(`${VITE_BASE_URL}/api/auth`, {
-				method: 'GET',
-				headers: {
-					Cookie: sessionCookie
-				}
-			});
-
-			if (resp.status === 200) {
-				return await resolve(event);
-			}
-			console.error(resp.statusText);
+		// Redirect unauthenticated users to the login page
+		if (!sessionCookie) {
+			redirect(303, loginUrl);
 		}
 
-		redirect(303, '/login');
+		const resp = await fetch(`${import.meta.env.VITE_AUTH_BACKEND_URL}/api/auth`, {
+			method: 'POST',
+			credentials: 'include',
+			headers: {
+				cookie: `session=${sessionCookie}`
+			}
+		});
+
+		if (resp.status === 200) {
+			return await resolve(event);
+		}
+		console.error(await resp.text());
+		redirect(303, loginUrl);
 	}
 
 	return await resolve(event);

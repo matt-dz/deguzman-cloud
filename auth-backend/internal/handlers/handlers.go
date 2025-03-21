@@ -40,7 +40,7 @@ func HandleHeartbeat(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleCors(w http.ResponseWriter, r *http.Request) {
-	cors.AddCors(w)
+	cors.AddCors(w, r)
 }
 
 func HandleLogin(w http.ResponseWriter, r *http.Request) {
