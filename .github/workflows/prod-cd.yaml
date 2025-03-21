@@ -31,6 +31,8 @@ jobs:
               - 'dss/**'
             auth-backend:
               - 'auth-backend/**'
+            auth-frontend:
+              - 'auth-frontend/**'
 
   build-frontend:
     needs: changes
