@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { env } from '$env/dynamic/public';
 	interface Props {
 		loggedIn: boolean;
 	}
@@ -7,7 +8,7 @@
 
 	async function logout() {
 		try {
-			const res = await fetch(`${import.meta.env.VITE_AUTH_URL}/api/logout`, {
+			const res = await fetch(`${env.PUBLIC_AUTH_BACKEND_URL}/api/logout`, {
 				method: 'POST',
 				credentials: 'include'
 			});
@@ -31,7 +32,7 @@
 	{#if loggedIn}
 		<button class="nav-container footer-underline" onclick={logout}>logout</button>
 	{:else}
-		<a class="nav-container footer-underline" href="https://auth.deguzman.cloud">login</a>
+		<a class="nav-container footer-underline" href={env.PUBLIC_AUTH_FRONTEND_URL}>login</a>
 	{/if}
 </div>
 

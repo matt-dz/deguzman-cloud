@@ -1,11 +1,13 @@
 import { redirect, type Handle } from '@sveltejs/kit';
+import { env as privateEnv } from '$env/dynamic/private';
+import { env as publicEnv } from '$env/dynamic/public';
 
 export const handle: Handle = async ({ event, resolve }) => {
 	const path = event.url.pathname;
 	console.log(path);
 
 	if (path.includes('/home')) {
-		const loginUrl = `${import.meta.env.VITE_AUTH_URL}?redirect=${encodeURIComponent(import.meta.env.VITE_BASE_URL + '/home')}`;
+		const loginUrl = `${publicEnv.PUBLIC_AUTH_FRONTEND_URL}?redirect=${encodeURIComponent(publicEnv.PUBLIC_BASE_URL + '/home')}`;
 		const sessionCookie = event.cookies.get('session');
 
 		// Redirect unauthenticated users to the login page
@@ -13,11 +15,11 @@ export const handle: Handle = async ({ event, resolve }) => {
 			redirect(303, loginUrl);
 		}
 
-		const resp = await fetch(`${import.meta.env.VITE_AUTH_BACKEND_URL}/api/auth`, {
+		const resp = await fetch(`${privateEnv.AUTH_INTERNAL_URL}/api/auth`, {
 			method: 'POST',
 			credentials: 'include',
 			headers: {
-				Origin: import.meta.env.VITE_BASE_URL,
+				Origin: publicEnv.PUBLIC_BASE_URL,
 				cookie: `session=${sessionCookie}`
 			}
 		});

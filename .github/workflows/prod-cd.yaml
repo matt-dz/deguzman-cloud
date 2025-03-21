@@ -37,7 +37,6 @@ jobs:
   build-frontend:
     needs: changes
     name: Build Frontend
-    environment: Frontend
     if: ${{ needs.changes.outputs.frontend == 'true' }}
     runs-on: ubuntu-24.04-arm
     steps:
@@ -48,11 +47,9 @@ jobs:
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build and push image
-        env:
-          VITE_AUTH_BACKEND_URL: ${{ secrets.VITE_AUTH_BACKEND_URL }}
         working-directory: frontend
         run: |
-          VITE_AUTH_BACKEND_URL=${VITE_AUTH_BACKEND_URL} make build
+          make build
           make docker-push TAG=$(git rev-parse --short "$GITHUB_SHA")
           make docker-push TAG=latest
 
@@ -135,7 +132,6 @@ jobs:
   build-auth-frontend:
     needs: changes
     name: Build Auth Frontend
-    environment: Auth Frontend
     if: ${{ needs.changes.outputs.auth-frontend == 'true' }}
     runs-on: ubuntu-24.04-arm
     steps:
