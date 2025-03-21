@@ -17,6 +17,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 			method: 'POST',
 			credentials: 'include',
 			headers: {
+				Origin: import.meta.env.VITE_BASE_URL,
 				cookie: `session=${sessionCookie}`
 			}
 		});
