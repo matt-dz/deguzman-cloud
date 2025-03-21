@@ -126,7 +126,7 @@ jobs:
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build and push image
-        working-directory: auth-backend
+        working-directory: auth/auth-backend
         run: |
           make build
           make docker-push TAG=$(git rev-parse --short "$GITHUB_SHA")
@@ -146,7 +146,7 @@ jobs:
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build and push image
-        working-directory: auth-frontend
+        working-directory: auth/auth-frontend
         run: |
           make build
           make docker-push TAG=$(git rev-parse --short "$GITHUB_SHA")
