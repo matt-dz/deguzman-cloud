@@ -8,7 +8,7 @@ PLATFORM ?= linux/arm64
 
 
 build:
-	docker build --platform $(PLATFORM) --build-arg $(VITE_AUTH_BACKEND_URL) -t $(BUILD_NAME) .
+	docker build --build-arg VITE_AUTH_BACKEND_URL=$(VITE_AUTH_BACKEND_URL) --platform $(PLATFORM) -t $(BUILD_NAME) .
 
 docker-push:
 	docker tag $(BUILD_NAME) $(BUILD_NAME):$(TAG)
