@@ -6,9 +6,8 @@ TAG ?= latest
 BUILD_NAME=$(DOCKER_REGISTRY)/$(IMAGE_NAME)
 PLATFORM ?= linux/arm64
 
-
 build:
-	docker buildx build --platform $(PLATFORM) -t $(BUILD_NAME) .
+	docker build --platform $(PLATFORM) -t $(BUILD_NAME) .
 
 docker-push:
 	docker tag $(BUILD_NAME) $(BUILD_NAME):$(TAG)

@@ -49,12 +49,8 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build and push image
         working-directory: frontend
-        env:
-          VITE_BASE_URL: ${{ vars.VITE_BASE_URL }}
-          VITE_AUTH_URL: ${{ vars.VITE_AUTH_URL }}
-          VITE_AUTH_BACKEND_URL: ${{ vars.VITE_AUTH_BACKEND_URL }}
         run: |
-          npm run build
+          make build
           make docker-push TAG=$(git rev-parse --short "$GITHUB_SHA")
           make docker-push TAG=latest
 
@@ -73,7 +69,7 @@ jobs:
       - name: Build and push image
         working-directory: qr-code
         run: |
-          npm run build
+          make build
           make docker-push TAG=$(git rev-parse --short "$GITHUB_SHA")
           make docker-push TAG=latest
 
@@ -92,7 +88,7 @@ jobs:
       - name: Build and push image
         working-directory: dsa
         run: |
-          npm run build
+          make build
           make docker-push TAG=$(git rev-parse --short "$GITHUB_SHA")
           make docker-push TAG=latest
 
@@ -149,11 +145,8 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build and push image
         working-directory: auth-frontend
-        env:
-          VITE_BASE_URL: ${{ vars.VITE_BASE_URL }}
-          VITE_HOME_URL: ${{ vars.VITE_HOME_URL }}
         run: |
-          npm run build
+          make build
           make docker-push TAG=$(git rev-parse --short "$GITHUB_SHA")
           make docker-push TAG=latest
 
