@@ -41,7 +41,7 @@
 			}
 
 			resBody = await res.json();
-			window.location.href = redirectUrl ?? import.meta.env.PUBLIC_HOME_URL;
+			window.location.href = redirectUrl ?? env.PUBLIC_HOME_URL;
 		} catch (e) {
 			alert('Uh-oh! Something went wrong...');
 			console.error(e);
