@@ -1,5 +1,6 @@
 <script lang="ts">
-	import type { LoginPayload, LoginResponse } from '$lib/auth';
+	import type { LoginResponse } from '$lib/types';
+	import type { SignupPayload } from '$lib/auth';
 	import { env } from '$env/dynamic/public';
 
 	interface Props {
@@ -10,6 +11,8 @@
 
 	let isErrorShaking = $state(false);
 
+	let firstName = $state('');
+	let lastName = $state('');
 	let email = $state('');
 	let password = $state('');
 	let errorText = $state('');
@@ -19,12 +22,16 @@
 		let resBody: LoginResponse | null = null;
 		try {
 			const loginEndpoint =
-				`${env.PUBLIC_BASE_URL}/api/login` +
+				`${env.PUBLIC_BASE_URL}/api/signup` +
 				(redirectUrl ? `?redirect=${encodeURIComponent(redirectUrl)}` : '');
-			const payload: LoginPayload = {
+
+			const payload: SignupPayload = {
+				first_name: firstName,
+				last_name: lastName,
 				email,
 				password
 			};
+
 			const res = await fetch(loginEndpoint, {
 				method: 'POST',
 				headers: {
@@ -43,8 +50,8 @@
 				return;
 			}
 
-			resBody = (await res.json()) as LoginResponse;
-			window.location.href = resBody.redirectUrl ?? env.PUBLIC_HOME_URL;
+			resBody = await res.json();
+			window.location.href = redirectUrl ?? env.PUBLIC_HOME_URL;
 		} catch (e) {
 			alert('Uh-oh! Something went wrong...');
 			console.error(e);
@@ -55,9 +62,27 @@
 <div class="flex w-full flex-col items-center px-12 py-8">
 	<div class="w-full">
 		<h1 class="text-2xl font-semibold">
-			Log in to the <span class="inline-block italic">DeGuzman Cloud</span>
+			Sign up for the <span class="inline-block italic">DeGuzman Cloud</span>
 		</h1>
 		<form class="mt-8 flex flex-col items-center gap-4" onsubmit={async (e) => await onsubmit(e)}>
+			<label class="flex w-full flex-col gap-2">
+				<h1 class="text-sm">First Name</h1>
+				<input
+					required
+					type="text"
+					bind:value={lastName}
+					class="rounded-lg border-2 border-gray-700 bg-black p-2 focus:border-blue-300 focus:drop-shadow-[0_0_6px_var(--color-blue-300)] focus:outline-none"
+				/>
+			</label>
+			<label class="flex w-full flex-col gap-2">
+				<h1 class="text-sm">Last Name</h1>
+				<input
+					required
+					type="text"
+					bind:value={lastName}
+					class="rounded-lg border-2 border-gray-700 bg-black p-2 focus:border-blue-300 focus:drop-shadow-[0_0_6px_var(--color-blue-300)] focus:outline-none"
+				/>
+			</label>
 			<label class="flex w-full flex-col gap-2">
 				<h1 class="text-sm">Email</h1>
 				<input
@@ -83,7 +108,7 @@
 			<button
 				class="transition-duration-200 mt-4 w-full cursor-pointer rounded-lg border-2 border-solid border-white bg-black px-4 py-2 text-violet-300 drop-shadow-[0_0_6px_#fff] transition-colors hover:bg-stone-700"
 			>
-				<span class="btn-text text-sm text-white sm:text-base">Log In</span>
+				<span class="btn-text text-sm text-white sm:text-base">Sign up</span>
 			</button>
 			<p class:shake-text={isErrorShaking} class="text-red-400" class:opacity-0={!errorText}>
 				{errorText || 'placeholder'}
