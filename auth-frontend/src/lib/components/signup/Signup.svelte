@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { LoginResponse } from '$lib/types';
 	import type { SignupPayload } from '$lib/auth';
 	import { env } from '$env/dynamic/public';
 
@@ -19,7 +18,6 @@
 
 	async function onsubmit(e: Event) {
 		e.preventDefault();
-		let resBody: LoginResponse | null = null;
 		try {
 			const loginEndpoint =
 				`${env.PUBLIC_BASE_URL}/api/signup` +
@@ -49,9 +47,6 @@
 				}, 1000);
 				return;
 			}
-
-			resBody = await res.json();
-			window.location.href = redirectUrl ?? env.PUBLIC_HOME_URL;
 		} catch (e) {
 			alert('Uh-oh! Something went wrong...');
 			console.error(e);
