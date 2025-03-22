@@ -1,12 +1,12 @@
+CREATE TYPE ROLE AS ENUM ('user', 'admin');
+
 CREATE TABLE users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
     email TEXT NOT NULL UNIQUE,
     password_hash TEXT NOT NULL,
     email_verified BOOLEAN NOT NULL DEFAULT FALSE,
-    registered_2fa BOOLEAN NOT NULL DEFAULT FALSE,
-    totp_key BYTEA,
-    recovery_code BYTEA,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now ()
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now (),
+    role ROLE NOT NULL DEFAULT 'user'
 );
 
 CREATE INDEX email_index ON users (email);
