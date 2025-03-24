@@ -48,6 +48,7 @@ func HandleRequest() Middleware {
 				}
 			}
 			r = r.WithContext(context.WithValue(r.Context(), "emailVerified", userSession.EmailVerified))
+			r = r.WithContext(context.WithValue(r.Context(), "role", userSession.Role))
 			next(w, r)
 		}
 	}

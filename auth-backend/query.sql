@@ -11,7 +11,7 @@ SELECT
     users.id,
     users.email,
     users.email_verified,
-    users.registered_2fa
+    users.role
 FROM sessions INNER JOIN users
     ON users.id = sessions.user_id
         WHERE sessions.id = $1;
@@ -26,8 +26,8 @@ UPDATE sessions SET expires_at = $1 WHERE id = $2;
 DELETE FROM sessions WHERE user_id = $1;
 
 -- name: CreateUser :one
-INSERT INTO users (email, password_hash)
-    VALUES ($1, $2)
+INSERT INTO users (email, password_hash, first_name, last_name)
+    VALUES ($1, $2, $3, $4)
     RETURNING id;
 
 -- name: GetPasswordAndId :one

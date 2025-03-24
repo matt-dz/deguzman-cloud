@@ -32,11 +32,10 @@ func main() {
 		middleware.Timer(),
 	))
 
-	// TODO: Refactor body to include first name and last name
-	// TODO: Add auth middleware to check for appropriate role
 	mux.HandleFunc("POST /api/signup", middleware.Chain(
 		handlers.HandleSignup,
-		middleware.AuthenticateSecret(),
+		middleware.HandleRequest(),
+		middleware.ValidateOrigin(),
 		middleware.LogContext(),
 		middleware.Timer(),
 	))
@@ -50,9 +49,8 @@ func main() {
 		middleware.Timer(),
 	))
 
-	// TODO: Add parameters for role
 	mux.HandleFunc("POST /api/auth", middleware.Chain(
-		handlers.HandleSessionValidation,
+		handlers.HandleAuth,
 		middleware.HandleRequest(),
 		middleware.ValidateOrigin(),
 		middleware.LogContext(),
