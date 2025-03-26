@@ -176,6 +176,18 @@
 						</p>
 					{/snippet}
 				</Discussion>
+				<Discussion
+					name="sets-maps-hash-tables"
+					title="8. Sets, Maps, and Hash Tables (03/25)"
+					pptLink="https://docs.google.com/presentation/d/1pXlepCty9XjII8XISoeBy_vM0A4USPznhSYxAY0lA0M/edit?usp=sharing"
+				>
+					{#snippet description()}
+						<p>
+							We go over sets, maps, and their breathtaking implementations using hash tables. We'll
+							also discuss the different strategies of hashing and their advantages/disadvantages.
+						</p>
+					{/snippet}
+				</Discussion>
 			</div>
 		</div>
 	</div>
