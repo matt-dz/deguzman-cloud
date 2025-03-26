@@ -56,18 +56,25 @@ func (q *Queries) CreateSession(ctx context.Context, arg CreateSessionParams) er
 }
 
 const createUser = `-- name: CreateUser :one
-INSERT INTO users (email, password_hash)
-    VALUES ($1, $2)
+INSERT INTO users (email, password_hash, first_name, last_name)
+    VALUES ($1, $2, $3, $4)
     RETURNING id
 `
 
 type CreateUserParams struct {
 	Email        string
 	PasswordHash string
+	FirstName    string
+	LastName     string
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (pgtype.UUID, error) {
-	row := q.db.QueryRow(ctx, createUser, arg.Email, arg.PasswordHash)
+	row := q.db.QueryRow(ctx, createUser,
+		arg.Email,
+		arg.PasswordHash,
+		arg.FirstName,
+		arg.LastName,
+	)
 	var id pgtype.UUID
 	err := row.Scan(&id)
 	return id, err
@@ -140,7 +147,7 @@ SELECT
     users.id,
     users.email,
     users.email_verified,
-    users.registered_2fa
+    users.roles
 FROM sessions INNER JOIN users
     ON users.id = sessions.user_id
         WHERE sessions.id = $1
@@ -151,7 +158,7 @@ type GetUserSessionBySessionIdRow struct {
 	ID            pgtype.UUID
 	Email         string
 	EmailVerified bool
-	Registered2fa bool
+	Roles         []Role
 }
 
 func (q *Queries) GetUserSessionBySessionId(ctx context.Context, id string) (GetUserSessionBySessionIdRow, error) {
@@ -165,7 +172,7 @@ func (q *Queries) GetUserSessionBySessionId(ctx context.Context, id string) (Get
 		&i.ID,
 		&i.Email,
 		&i.EmailVerified,
-		&i.Registered2fa,
+		&i.Roles,
 	)
 	return i, err
 }

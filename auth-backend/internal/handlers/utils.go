@@ -25,7 +25,7 @@ func decodeJson(dst interface{}, r *http.Request) error {
 func sanitizeRedirect(redirect string) string {
 	if os.Getenv("ENV") != "PROD" {
 		if redirect == "" {
-			return "/home"
+			return os.Getenv("SIGNUP_REDIRECT")
 		}
 		return redirect
 	}

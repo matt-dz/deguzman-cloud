@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { LoginResponse } from '$lib/types';
+	import type { LoginPayload, LoginResponse } from '$lib/auth';
 	import { env } from '$env/dynamic/public';
 
 	interface Props {
@@ -16,19 +16,21 @@
 
 	async function onsubmit(e: Event) {
 		e.preventDefault();
-		let resBody: LoginResponse | null = null;
 		try {
 			const loginEndpoint =
 				`${env.PUBLIC_BASE_URL}/api/login` +
 				(redirectUrl ? `?redirect=${encodeURIComponent(redirectUrl)}` : '');
-			console.log(loginEndpoint);
+			const payload: LoginPayload = {
+				email,
+				password
+			};
 			const res = await fetch(loginEndpoint, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
 				},
 				credentials: 'include',
-				body: JSON.stringify({ email, password })
+				body: JSON.stringify(payload)
 			});
 
 			if (!res.ok) {
@@ -40,8 +42,8 @@
 				return;
 			}
 
-			resBody = await res.json();
-			window.location.href = redirectUrl ?? env.PUBLIC_HOME_URL;
+			const resBody = (await res.json()) as LoginResponse;
+			window.location.href = resBody.redirect ?? env.PUBLIC_HOME_URL;
 		} catch (e) {
 			alert('Uh-oh! Something went wrong...');
 			console.error(e);

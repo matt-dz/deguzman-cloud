@@ -34,8 +34,10 @@ func main() {
 
 	mux.HandleFunc("POST /api/signup", middleware.Chain(
 		handlers.HandleSignup,
-		middleware.AuthenticateSecret(),
+		middleware.HandleRequest(),
+		middleware.ValidateOrigin(),
 		middleware.LogContext(),
+		middleware.AddLoginCors(),
 		middleware.Timer(),
 	))
 
@@ -49,7 +51,7 @@ func main() {
 	))
 
 	mux.HandleFunc("POST /api/auth", middleware.Chain(
-		handlers.HandleSessionValidation,
+		handlers.HandleAuth,
 		middleware.HandleRequest(),
 		middleware.ValidateOrigin(),
 		middleware.LogContext(),

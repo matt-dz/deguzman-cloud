@@ -8,6 +8,7 @@ import (
 	"log/slog"
 	"net/http"
 	"net/mail"
+	"slices"
 	"time"
 
 	"deguzman-auth/internal/argon2id"
@@ -47,9 +48,9 @@ func HandleLogin(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
 
 	/* Parse body */
-	var body HandleLoginBody
+	var body LoginBody
 	if err := decodeJson(&body, r); err != nil {
-		log.Error("Failed to decode body", slog.Any("error", err))
+		log.ErrorContext(r.Context(), "Failed to decode body", slog.Any("error", err))
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
@@ -102,22 +103,23 @@ func HandleLogin(w http.ResponseWriter, r *http.Request) {
 	session.SetSessionTokenCookie(w, token, userSession.ExpiresAt.Time)
 
 	/* Redirect */
-	json.NewEncoder(w).Encode(HandleLoginResponse{
+	json.NewEncoder(w).Encode(LoginResponse{
 		Redirect: sanitizeRedirect(r.URL.Query().Get("redirect")),
 	})
 }
 
+// Handles the creation of a user. This endpoint should be called
+// by admins only, hence why no session is created here.
 func HandleSignup(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
 
 	/* Parse body */
-	var body HandleSignupBody
+	var body SignupBody
 	if err := decodeJson(&body, r); err != nil {
-		log.Error("Failed to decode body", slog.Any("error", err))
+		log.ErrorContext(r.Context(), "Failed to decode body", slog.Any("error", err))
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	defer r.Body.Close()
 
 	/* Validate email */
 	log.DebugContext(r.Context(), "Validating email")
@@ -127,13 +129,13 @@ func HandleSignup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	/* Validate and hash password */
 	log.DebugContext(r.Context(), "Validating password")
 	if err := pswd.ValidatePassword(body.Password); err != nil {
 		log.ErrorContext(r.Context(), "Password does not meet requirements", slog.Any("error", err))
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-
 	log.DebugContext(r.Context(), "Hashing Password")
 	passwordHash, err := argon2id.EncodeHash(body.Password, argon2id.DefaultParams)
 	if err != nil {
@@ -144,10 +146,13 @@ func HandleSignup(w http.ResponseWriter, r *http.Request) {
 
 	/* Create user */
 	log.DebugContext(r.Context(), "Creating user")
-	userId, err := sqlcDb.CreateUser(ctx, sqlc.CreateUserParams{
+	_, err = sqlcDb.CreateUser(ctx, sqlc.CreateUserParams{
 		Email:        body.Email,
 		PasswordHash: passwordHash,
+		FirstName:    body.FirstName,
+		LastName:     body.LastName,
 	})
+
 	if err != nil {
 		if pgErr, ok := err.(*pgconn.PgError); ok {
 			if pgErr.Code == "23505" {
@@ -160,19 +165,6 @@ func HandleSignup(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
-
-	/* Create session */
-	log.DebugContext(r.Context(), "Creating session")
-	token := session.GenerateSessionToken()
-	userSession, err := session.CreateSession(sqlcDb, token, userId)
-	if err != nil {
-		log.ErrorContext(r.Context(), "Failed to create session", slog.Any("error", err))
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-		return
-	}
-
-	log.DebugContext(r.Context(), "Setting session token cookie")
-	session.SetSessionTokenCookie(w, token, userSession.ExpiresAt.Time)
 }
 
 func HandleLogout(w http.ResponseWriter, r *http.Request) {
@@ -180,28 +172,51 @@ func HandleLogout(w http.ResponseWriter, r *http.Request) {
 	session.DeleteSessionTokenCookie(w)
 }
 
-func HandleSessionValidation(w http.ResponseWriter, r *http.Request) {
-	if verified, ok := r.Context().Value("emailVerified").(bool); ok {
-		if !verified {
-			log.ErrorContext(r.Context(), "Email not verified")
-			http.Error(w, "Email not verified", http.StatusUnauthorized)
-		}
+func HandleAuth(w http.ResponseWriter, r *http.Request) {
+	var body AuthBody
+	if err := decodeJson(&body, r); err != nil {
+		log.ErrorContext(r.Context(), "Failed to decode body", slog.Any("error", err))
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+
+	/* Assert role */
+	if userRoles, ok := r.Context().Value("roles").([]sqlc.Role); ok {
+		log.DebugContext(r.Context(), "Checking user roles", slog.Any("roles", userRoles), slog.Any("role", body.Role))
+		if !slices.Contains(userRoles, body.Role) {
+			log.ErrorContext(r.Context(), "User does not have required role", slog.Any("role", body.Role))
+			http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+			return
+		}
+	} else {
+		log.ErrorContext(r.Context(), "Unable to retrieve roles")
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+
+	/* Assert verified email */
+	// if verified, ok := r.Context().Value("emailVerified").(bool); ok {
+	// 	if !verified {
+	// 		log.ErrorContext(r.Context(), "Email not verified")
+	// 		http.Error(w, "Email not verified", http.StatusUnauthorized)
+	// 	}
+	// 	return
+	// }
+
+	// log.ErrorContext(r.Context(), "Unable to retrieve email verification status")
+	// http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 }
 
 func HandleEmailVerification(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
 
 	/* Parse form */
-	var body HandleEmailVerificationBody
+	var body EmailVerificationBody
 	if err := decodeJson(&body, r); err != nil {
-		log.Error("Failed to decode body", slog.Any("error", err))
+		log.ErrorContext(r.Context(), "Failed to decode body", slog.Any("error", err))
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	defer r.Body.Close()
 
 	/* Retrieve email from session */
 	log.DebugContext(r.Context(), "Retrieving email from session token")
