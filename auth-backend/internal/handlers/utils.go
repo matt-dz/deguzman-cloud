@@ -23,16 +23,16 @@ func decodeJson(dst interface{}, r *http.Request) error {
 }
 
 func sanitizeRedirect(redirect string) string {
-	if os.Getenv("ENV") != "PROD" {
-		if redirect == "" {
-			return os.Getenv("SIGNUP_REDIRECT")
+	if os.Getenv("ENV") == "PROD" {
+		// Ensure redirect is a relative path or subdomain of deguzman.cloud
+		if (len(redirect) > 0 && redirect[0] == '/') || !redirectPattern.MatchString(redirect) {
+			return os.Getenv("BASE_URL")
 		}
 		return redirect
 	}
 
-	// Ensure redirect is a subdomain of deguzman.cloud
-	if !redirectPattern.MatchString(redirect) {
-		return os.Getenv("BASE_URL")
+	if redirect == "" {
+		return os.Getenv("SIGNUP_REDIRECT")
 	}
 	return redirect
 }
