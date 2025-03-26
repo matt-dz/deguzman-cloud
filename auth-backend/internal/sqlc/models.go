@@ -86,5 +86,5 @@ type User struct {
 	PasswordHash  string
 	EmailVerified bool
 	CreatedAt     pgtype.Timestamptz
-	Role          []Role
+	Roles         []Role
 }

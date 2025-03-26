@@ -1,3 +1,5 @@
+CREATE TYPE role AS ENUM ('user', 'admin');
+
 -- name: CreateSession :exec
 INSERT INTO sessions (
     id, user_id, expires_at
@@ -11,7 +13,7 @@ SELECT
     users.id,
     users.email,
     users.email_verified,
-    users.role
+    users.roles
 FROM sessions INNER JOIN users
     ON users.id = sessions.user_id
         WHERE sessions.id = $1;

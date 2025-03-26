@@ -16,7 +16,6 @@
 
 	async function onsubmit(e: Event) {
 		e.preventDefault();
-		let resBody: LoginResponse | null = null;
 		try {
 			const loginEndpoint =
 				`${env.PUBLIC_BASE_URL}/api/login` +
@@ -43,8 +42,8 @@
 				return;
 			}
 
-			resBody = (await res.json()) as LoginResponse;
-			window.location.href = resBody.redirectUrl ?? env.PUBLIC_HOME_URL;
+			const resBody = (await res.json()) as LoginResponse;
+			window.location.href = resBody.redirect ?? env.PUBLIC_HOME_URL;
 		} catch (e) {
 			alert('Uh-oh! Something went wrong...');
 			console.error(e);

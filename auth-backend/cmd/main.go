@@ -37,6 +37,7 @@ func main() {
 		middleware.HandleRequest(),
 		middleware.ValidateOrigin(),
 		middleware.LogContext(),
+		middleware.AddLoginCors(),
 		middleware.Timer(),
 	))
 

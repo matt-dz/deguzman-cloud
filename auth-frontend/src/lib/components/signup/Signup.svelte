@@ -10,25 +10,52 @@
 
 	let isErrorShaking = $state(false);
 
-	let firstName = $state('');
-	let lastName = $state('');
-	let email = $state('');
-	let password = $state('');
+	let signupPayload: SignupPayload = $state({
+		first_name: '',
+		last_name: '',
+		email: '',
+		password: ''
+	});
+	let confirmedPassword = $state('');
 	let errorText = $state('');
+
+	function setErrorText(text: string) {
+		errorText = text;
+		isErrorShaking = true;
+		setTimeout(() => {
+			isErrorShaking = false;
+		}, 1000);
+	}
+
+	function validatePasswords(): boolean {
+		if (confirmedPassword !== signupPayload.password) {
+			setErrorText('Passwords do not match');
+			return false;
+		} else {
+			errorText = '';
+			return true;
+		}
+	}
+
+	function clearFields() {
+		signupPayload = {
+			first_name: '',
+			last_name: '',
+			email: '',
+			password: ''
+		};
+		confirmedPassword = '';
+		errorText = '';
+	}
 
 	async function onsubmit(e: Event) {
 		e.preventDefault();
+
+		if (!validatePasswords()) return;
 		try {
 			const loginEndpoint =
 				`${env.PUBLIC_BASE_URL}/api/signup` +
 				(redirectUrl ? `?redirect=${encodeURIComponent(redirectUrl)}` : '');
-
-			const payload: SignupPayload = {
-				first_name: firstName,
-				last_name: lastName,
-				email,
-				password
-			};
 
 			const res = await fetch(loginEndpoint, {
 				method: 'POST',
@@ -36,17 +63,16 @@
 					'Content-Type': 'application/json'
 				},
 				credentials: 'include',
-				body: JSON.stringify(payload)
+				body: JSON.stringify(signupPayload)
 			});
 
 			if (!res.ok) {
-				errorText = await res.text();
-				isErrorShaking = true;
-				setTimeout(() => {
-					isErrorShaking = false;
-				}, 1000);
+				setErrorText(await res.text());
 				return;
 			}
+
+			clearFields();
+			alert('Successfully created user!');
 		} catch (e) {
 			alert('Uh-oh! Something went wrong...');
 			console.error(e);
@@ -65,7 +91,7 @@
 				<input
 					required
 					type="text"
-					bind:value={lastName}
+					bind:value={signupPayload.first_name}
 					class="rounded-lg border-2 border-gray-700 bg-black p-2 focus:border-blue-300 focus:drop-shadow-[0_0_6px_var(--color-blue-300)] focus:outline-none"
 				/>
 			</label>
@@ -74,7 +100,7 @@
 				<input
 					required
 					type="text"
-					bind:value={lastName}
+					bind:value={signupPayload.last_name}
 					class="rounded-lg border-2 border-gray-700 bg-black p-2 focus:border-blue-300 focus:drop-shadow-[0_0_6px_var(--color-blue-300)] focus:outline-none"
 				/>
 			</label>
@@ -83,8 +109,8 @@
 				<input
 					required
 					type="email"
+					bind:value={signupPayload.email}
 					autocomplete="email"
-					bind:value={email}
 					class="rounded-lg border-2 border-gray-700 bg-black p-2 focus:border-blue-300 focus:drop-shadow-[0_0_6px_var(--color-blue-300)] focus:outline-none"
 				/>
 			</label>
@@ -93,9 +119,22 @@
 				<h1 class="text-sm">Password</h1>
 				<input
 					required
-					autocomplete="current-password"
 					type="password"
-					bind:value={password}
+					autocomplete="new-password"
+					bind:value={signupPayload.password}
+					class="rounded-lg border-2 border-gray-700 bg-black p-2 focus:border-blue-300 focus:drop-shadow-[0_0_6px_var(--color-blue-300)] focus:outline-none"
+				/>
+			</label>
+
+			<label class="flex w-full flex-col gap-2">
+				<h1 class="text-sm">Confirm Password</h1>
+				<input
+					required
+					type="password"
+					autocomplete="new-password"
+					bind:value={confirmedPassword}
+					class:!border-red-400={confirmedPassword && confirmedPassword !== signupPayload.password}
+					onchange={validatePasswords}
 					class="rounded-lg border-2 border-gray-700 bg-black p-2 focus:border-blue-300 focus:drop-shadow-[0_0_6px_var(--color-blue-300)] focus:outline-none"
 				/>
 			</label>

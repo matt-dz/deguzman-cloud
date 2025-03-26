@@ -1,4 +1,4 @@
-CREATE TYPE ROLE AS ENUM ('user', 'admin');
+CREATE TYPE role AS ENUM ('user', 'admin');
 
 CREATE TABLE users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
@@ -8,7 +8,7 @@ CREATE TABLE users (
     password_hash TEXT NOT NULL,
     email_verified BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now (),
-    role ROLE[] NOT NULL DEFAULT '{"user"}'
+    roles role[] NOT NULL DEFAULT '{"user"}'
 );
 
 CREATE INDEX email_index ON users (email);

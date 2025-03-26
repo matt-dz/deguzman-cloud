@@ -1,4 +1,5 @@
 import { redirect, type Handle } from '@sveltejs/kit';
+import { type AuthPayload, AuthRole } from '$lib/auth';
 import { env as privateEnv } from '$env/dynamic/private';
 import { env as publicEnv } from '$env/dynamic/public';
 
@@ -21,7 +22,8 @@ export const handle: Handle = async ({ event, resolve }) => {
 			headers: {
 				Origin: publicEnv.PUBLIC_BASE_URL,
 				cookie: `session=${sessionCookie}`
-			}
+			},
+			body: JSON.stringify({ role: AuthRole.Admin } as AuthPayload)
 		});
 
 		if (resp.status === 200) {

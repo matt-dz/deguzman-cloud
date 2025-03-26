@@ -1,7 +1,13 @@
+export const sessionCookieName = 'session';
+
 export enum AuthRole {
-	ADMIN = 'admin',
-	USER = 'user'
+	Admin = 'admin',
+	User = 'user'
 }
+
+export type AuthPayload = {
+	role: AuthRole;
+};
 
 export type SignupPayload = {
 	first_name: string;
@@ -16,5 +22,5 @@ export type LoginPayload = {
 };
 
 export type LoginResponse = {
-	redirectUrl: string;
+	redirect: string;
 };

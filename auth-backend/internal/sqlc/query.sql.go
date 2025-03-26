@@ -147,7 +147,7 @@ SELECT
     users.id,
     users.email,
     users.email_verified,
-    users.role
+    users.roles
 FROM sessions INNER JOIN users
     ON users.id = sessions.user_id
         WHERE sessions.id = $1
@@ -158,7 +158,7 @@ type GetUserSessionBySessionIdRow struct {
 	ID            pgtype.UUID
 	Email         string
 	EmailVerified bool
-	Role          []Role
+	Roles         []Role
 }
 
 func (q *Queries) GetUserSessionBySessionId(ctx context.Context, id string) (GetUserSessionBySessionIdRow, error) {
@@ -172,7 +172,7 @@ func (q *Queries) GetUserSessionBySessionId(ctx context.Context, id string) (Get
 		&i.ID,
 		&i.Email,
 		&i.EmailVerified,
-		&i.Role,
+		&i.Roles,
 	)
 	return i, err
 }

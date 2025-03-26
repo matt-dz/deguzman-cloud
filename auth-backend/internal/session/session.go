@@ -206,10 +206,6 @@ func DeleteSessionTokenCookie(w http.ResponseWriter) {
 
 func AuthorizeSession(w http.ResponseWriter, r *http.Request) (*sqlc.GetUserSessionBySessionIdRow, error) {
 	/* Validate session cookie */
-	log.Debug("Cookies")
-	for _, cookie := range r.Cookies() {
-		log.Debug("Cookie", slog.String("name", cookie.Name), slog.String("value", cookie.Value))
-	}
 	token, err := r.Cookie(sessionCookieName)
 	if err != nil {
 		if errors.Is(err, http.ErrNoCookie) {

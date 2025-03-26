@@ -1,5 +1,7 @@
 package handlers
 
+import "deguzman-auth/internal/sqlc"
+
 type LoginBody struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
@@ -17,7 +19,7 @@ type EmailVerificationBody struct {
 }
 
 type AuthBody struct {
-	Role string `json:"role"`
+	Role sqlc.Role `json:"role"`
 }
 
 type LoginResponse struct {
