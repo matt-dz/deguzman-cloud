@@ -25,7 +25,7 @@ func decodeJson(dst interface{}, r *http.Request) error {
 func sanitizeRedirect(redirect string) string {
 	if os.Getenv("ENV") == "PROD" {
 		// Ensure redirect is a relative path or subdomain of deguzman.cloud
-		if (len(redirect) > 0 && redirect[0] == '/') || !redirectPattern.MatchString(redirect) {
+		if !((len(redirect) > 0 && redirect[0] == '/') || redirectPattern.MatchString(redirect)) {
 			return os.Getenv("BASE_URL")
 		}
 		return redirect
