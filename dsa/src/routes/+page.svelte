@@ -178,13 +178,25 @@
 				</Discussion>
 				<Discussion
 					name="sets-maps-hash-tables"
-					title="8. Sets, Maps, and Hash Tables (03/25)"
+					title="9. Sets, Maps, and Hash Tables (03/25)"
 					pptLink="https://docs.google.com/presentation/d/1pXlepCty9XjII8XISoeBy_vM0A4USPznhSYxAY0lA0M/edit?usp=sharing"
 				>
 					{#snippet description()}
 						<p>
 							We go over sets, maps, and their breathtaking implementations using hash tables. We'll
 							also discuss the different strategies of hashing and their advantages/disadvantages.
+						</p>
+					{/snippet}
+				</Discussion>
+				<Discussion
+					name="graph-implementation-traversals"
+					title="10. Graph Implementation and Traversals (04/01)"
+					pptLink="https://docs.google.com/presentation/d/17oYH9KxF9JlVbaPuDo5fABLkLoG2IJocHQd8B63mmuY/edit?usp=sharing"
+				>
+					{#snippet description()}
+						<p>
+							We go over graph implementations and traversals. We'll discuss adjacency matrices,
+							adjacency lists, edge lists, and different graph traversal algorithms.
 						</p>
 					{/snippet}
 				</Discussion>
