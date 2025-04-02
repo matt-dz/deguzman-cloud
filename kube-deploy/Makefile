@@ -6,16 +6,17 @@ ifneq (,$(wildcard .env))
 	export
 endif
 
-IMAGE_NAME ?= deguzman-kube-deploy
+IMAGE_NAME ?= kube-deploy
 DOCKER_REGISTRY ?= matthew10125
 TAG ?= latest
 BUILD_NAME=$(DOCKER_REGISTRY)/$(IMAGE_NAME)
 TARGETOS ?= linux
 TARGETARCH ?= arm64
+CGO_ENABLED ?= 0
 
 
 all:
-	CGO_ENABLED=0 GOOS=$(TARGETOS) GOARCH=$(TARGETARCH) go build -o bin/dga cmd/main.go
+	CGO_ENABLED=$(CGO_ENABLED) GOOS=$(TARGETOS) GOARCH=$(TARGETARCH) go build -o bin/kube-deploy cmd/main.go
 
 run:
 	go run cmd/main.go
