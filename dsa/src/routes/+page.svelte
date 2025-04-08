@@ -200,6 +200,18 @@
 						</p>
 					{/snippet}
 				</Discussion>
+				<Discussion
+					name="graph-algorithms"
+					title="11. Graph algorithms (04/08)"
+					pptLink="https://docs.google.com/presentation/d/1G_G0vepCkmJLTQ0Dtu3gWbgPFdS8tOYQEVWVk6usKrE/edit?usp=sharing"
+				>
+					{#snippet description()}
+						<p>
+							We go over notable graph algorithms such as shortest path (Dijkstra's and
+							Bellman-Ford), topological sort, and minimum spanning tree.
+						</p>
+					{/snippet}
+				</Discussion>
 			</div>
 		</div>
 	</div>
