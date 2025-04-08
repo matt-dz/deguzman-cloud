@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"kube-deploy/internal/cors"
 	"kube-deploy/internal/k8s"
 	"kube-deploy/internal/logger"
@@ -27,4 +28,20 @@ func HandleGetNamespace(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 		return
 	}
+}
+
+func HandleGetDeploymentLogs(w http.ResponseWriter, r *http.Request) {
+	namespace, deploymentName := r.PathValue("namespace"), r.PathValue("name")
+
+	log.DebugContext(r.Context(), "Retrieving Logs")
+	logs, err := k8s.GetPodLogs(namespace, deploymentName)
+	if err != nil {
+		log.ErrorContext(r.Context(), "Failed to retrieve logs", slog.Any("error", err))
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+
+	log.DebugContext(r.Context(), "Encoding result")
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(logs)
 }

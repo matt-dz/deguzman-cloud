@@ -32,6 +32,14 @@ func main() {
 		middleware.Timer(),
 	))
 
+	mux.HandleFunc("GET /deployment/{namespace}/{name}/logs", middleware.Chain(
+		handlers.HandleGetDeploymentLogs,
+		middleware.AuthenticateSecret(),
+		middleware.LogContext(),
+		middleware.AddCors(),
+		middleware.Timer(),
+	))
+
 	log.Info("Starting server on :80")
 	server := &http.Server{
 		Addr:    ":80",
