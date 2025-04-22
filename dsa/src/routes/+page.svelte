@@ -212,6 +212,15 @@
 						</p>
 					{/snippet}
 				</Discussion>
+				<Discussion
+					name="graph-algorithms"
+					title="12. DP and Complexity Theory (04/22)"
+					pptLink="https://docs.google.com/presentation/d/1BclCucahDNZLPs_EwIz0J-SW8XRB2sZf2x9y5TjDUyo/edit?usp=sharing"
+				>
+					{#snippet description()}
+						<p>Dynamic programming and complexity theory.</p>
+					{/snippet}
+				</Discussion>
 			</div>
 		</div>
 	</div>
